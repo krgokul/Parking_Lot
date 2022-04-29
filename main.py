@@ -15,10 +15,9 @@ class Spot:
         return "{} {} {} {}".format(self.name,self.vehicle_id,self.vehicle_type,self.is_occupied)    
 
 class Floor:
-    def __init__(self,name,entry,exit):
+    def __init__(self,name):
         self.name = name
-        self.entry = entry
-        self.exit = exit
+        self.checkpoints =[]
         self.spots = []
     
     def __str__(self):
@@ -44,19 +43,25 @@ class Floor:
         print("{} remove from floor successfully.".format(spot_name))
     
     def get_entry_list(self):
-        return self.entry
+        entry = []
+        for i in self.checkpoints:
+            if i.type == "entrance":
+                entry.append(i.name)
+        return entry
     
     def get_exit_list(self):
-        return self.exit           
+        entry = []
+        for i in self.checkpoints:
+            if i.type == "exit":
+                entry.append(i.name)
+        return entry         
 
             
 class System:
     floors=[]
-    def __init__(self):
-        pass
 
-    def add_floor(self,name,entry,exit):
-        self.floors.append(Floor(name,entry,exit))
+    def add_floor(self,name):
+        self.floors.append(Floor(name))
         print("Floor added to parking lot successfully!")
 
     def add_spot(self,floor_name,spot_name,vehicle_type,is_free):
@@ -74,12 +79,12 @@ class System:
             if i.name == floor_name:
                 i.remove_spot_from_floor(spot_name)
 
-    def add_entry_to_floor(self,floor_name):
-     for i in self.floors:
-        if i.name == floor_name:
-            entry = input("Enter the name for entrance to floor {}\n".format(floor_name))
-            i.entry.append(entry)
-    
+    def add_checkpoint_to_floor(self,floor_name,checkpoint):
+        for i in self.floors:
+            if i.name == floor_name:
+                i.checkpoints.append(checkpoint)
+                print("{} added successfully".format(checkpoint.name))
+
     def add_exit_to_floor(self,floor_name):
      for i in self.floors:
         if i.name == floor_name:
@@ -114,7 +119,7 @@ class System:
     def choose_exit(self,floor_name):
         ex=""
         for i in self.floors:
-           if i.name == ticket.floor_name:
+           if i.name == floor_name:
                 exit_list =  i.get_exit_list()
                 for j in range (len(exit_list)):
                     print("{} - {} ".format(j,exit_list[j]))
@@ -153,9 +158,9 @@ class System:
         result = pay.initiate_payment()
         return Receipt(ticket,exit_name,datetime.datetime.now(),result[0],result[1])
     
-    def calculate_price(self,ticket_date):
+    def calculate_price(self,entry_time):
         price=0
-        second = int(ticket_date.second)
+        second = int(entry_time.second)
         total = int(datetime.datetime.now().second) - second
         if total <= 3:
             if total >= 1:
@@ -236,29 +241,27 @@ class Ticket:
     def __str__(self):
         return "{} {} {} {} {} {}".format(self.id,self.vehicle_id,self.floor_name,self.spot_name,self.entry_name,self.entry_date)
 
-
-
-
-
+class Checkpoint:
+    def __init__(self,type,name):
+        self.type = type
+        self.name = name
+    def __str__(self):
+        return "{} {}".format(self.name,self.type)
 
 system = System()
 admin = Admin("A1",system)
 v1 = Vehicle("TN60 1234","Bike")
 C1 = Customer(v1,system)
 
-admin.sys_obj.add_floor("F1",[],[])
-admin.sys_obj.add_floor("F2",[],[])
-admin.sys_obj.add_spot("F1","F1S1","Bike",False)
-admin.sys_obj.add_spot("F1","F1S2","Bike",False)
-admin.sys_obj.add_entry_to_floor("F1")
-admin.sys_obj.add_exit_to_floor("F1")
+admin.sys_obj.add_floor("F1")
 
-entrance_name = C1.sys_obj.choose_entrance("F1") 
-C1.ticket = C1.sys_obj.get_ticket("F1","F1S1",entrance_name,C1.vehicle_obj.id)
+ch1 = Checkpoint("entrance","F1EN1")
+ch2 = Checkpoint("entrance","F1EN2")
+ch3 = Checkpoint("entrance","F1EN3")
 
-C1.sys_obj.display_floors_and_spots()
+admin.sys_obj.add_checkpoint_to_floor("F1",ch1)
+admin.sys_obj.add_checkpoint_to_floor("F1",ch2)
+admin.sys_obj.add_checkpoint_to_floor("F1",ch3)
+entr = admin.sys_obj.choose_entrance("F1")
 
-exit_name = C1.sys_obj.choose_entrance("F1") 
-payment_type = C1.sys_obj.payment_mode() 
-result = C1.sys_obj.exit_vehicle(C1.ticket,exit_name,payment_type)
-print(result)
+s1 =  System()
