@@ -1,42 +1,59 @@
 class System:
+    """
+    System class :- contains common operation that are performed by both admin and customer.
+    
+    It contains following operations such as
+1. Display floors and spots in parking lot.
+2. Display available spots for parking vehicle.
+3. Display entrances in floor.
+4. Display exits in floor.
+
+    """
     floors=[]
+
+    def get_floors(self):
+        return System.floors
+
+    def set_floor(self,floor):
+        System.floors.append(floor)
+    
     def display_floors_and_spots(self):
-        for i in self.floors:
+        for floor in self.get_floors():
             print("--------------")
-            print("Floor name:-",i.get_floor_name())
+            print("Floor name:-",floor.get_floor_name())
             print("Entrance:-")
-            for en in i.get_entry_list():
-                print(en)
+            for entrance in floor.get_entry_list():
+                print(entrance)
             print("\nExit:-")
-            for ex in i.get_exit_list():
-                print(ex)
+            for exit in floor.get_exit_list():
+                print(exit)
             print("\nSpots:-")
-            for sp in i.spots:
-                print(sp)
+            for spot in floor.get_spots():
+                print(spot)
             print("--------------")
 
     def display_availability(self,vehicle_type):
         print("-----------")
-        for i in self.floors:
-            print("{}".format(i.get_floor_name()))
-            spot_list = i.get_available_spots(vehicle_type)
+        for floor in self.get_floors():
+            print("{}".format(floor.get_floor_name()))
+            spot_list = floor.get_available_spots(vehicle_type)
             if(len(spot_list) == 0):
                 print("{} parking is full".format(vehicle_type))
-            for j in spot_list:
-                print (j.get_spot_name())
+            for spot in spot_list:
+                print (spot.get_spot_name())
             print("-----------")
     
-    def display_entrance(self,floor_name):
-        for i in self.floors:
-           if i.get_floor_name() == floor_name:
-                entrance =  i.get_entry_list()
-                for j in entrance:
-                    print(j)
-    
-    def display_exit(self,floor_name):
-        for i in self.floors:
-           if i.get_floor_name() == floor_name:
-                exit =  i.get_exit_list()
-                for j in exit:
-                    print(j)
+    def display_entrances(self,floor_name):
+        for floor in self.get_floors():
+           if floor.get_floor_name() == floor_name:
+                entrance_list =  floor.get_entry_list()
+                for entrance in entrance_list:
+                    print(entrance)
+
+    def display_exits(self,floor_name):
+        for floor in self.get_floors():
+           if floor.get_floor_name() == floor_name:
+                exit_list =  floor.get_exit_list()
+                for exit in exit_list:
+                    print(exit)
 

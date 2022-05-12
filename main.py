@@ -17,7 +17,7 @@ admin = Admin("A1")
 
 admin_system.add_floor("F1")
 admin_system.add_spot("F1","F1S1","Car")
-# admin.sys_obj.remove_spot("F1","F1S1")
+# admin_system.remove_spot("F1","F1S1")
 
 admin_system.add_spot("F1","F1S2","Car")
 admin_system.add_spot("F1","F1S3","Bike")
@@ -31,13 +31,12 @@ ch3 = Checkpoint("entrance","F1EN2")
 admin_system.add_checkpoint_to_floor("F1",ch1)
 admin_system.add_checkpoint_to_floor("F1",ch2)
 admin_system.add_checkpoint_to_floor("F1",ch3)
-system.display_entrance("F1")
-system.display_exit("F1")
-
-# admin.sys_obj.edit_checkpoint("F1",ch2)
-# admin.sys_obj.remove_checkpoint_from_floor("F1",ch1)
-admin_system.display_availability("Bike")
-# admin_system.display_floors_and_spots()
+# system.display_entrances("F1")
+# system.display_exits("F1")
+# admin_system.edit_checkpoint("F1",ch2)
+# admin_system.remove_checkpoint_from_floor("F1",ch1.get_checkpoint_name())
+# # admin_system.display_availability("Bike")
+admin_system.display_floors_and_spots()
 
 """ Customer functionalities """
 # customer_system = CustomerSystem()
@@ -45,9 +44,12 @@ admin_system.display_availability("Bike")
 # c1 = Customer(v1)
 
 # customer_system.display_availability("Car")
-# en = customer_system.choose_entrance("F1")
+# system.display_entrances("F1")
+# en = "F1EN1"
 # c1.set_ticket(customer_system.get_ticket("F1","F1S2",en,c1.get_vehicle_id()))
 # # print(C1.ticket)
-# ex = customer_system.choose_exit("F1")
+# system.display_exits("F1")
+# ex= "F1EX1"
+# customer_system.display_payment_mode()
 # c1.set_receipt(customer_system.exit_vehicle(c1.get_ticket(),ex,"Credit"))
 # print(c1.get_receipt())

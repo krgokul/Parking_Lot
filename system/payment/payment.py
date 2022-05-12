@@ -1,9 +1,12 @@
 class Payment:
-    
+    """
+    Payment class :- is a parent class which holds price and payment_status attribute  
+
+    """
     def __init__(self,price):
         self.price= price
         self.payment_status = False
-    
+
     def get_price(self):
         return self.price
 

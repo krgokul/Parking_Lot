@@ -4,62 +4,52 @@ from system.customer_system.ticket import Ticket
 from system.customer_system.receipt import Receipt
 from system.payment.payment_modes.credit import Credit
 from system.payment.payment_modes.cash import Cash
-
 import datetime
 
 class CustomerSystem(System):
-    def choose_entrance(self,floor_name):
-        en=""
-        for i in self.floors:
-           if i.name == floor_name:
-                entrance =  i.get_entry_list()
-                for j in range (len(entrance)):
-                    print("{} - {} ".format(j,entrance[j]))
-                en = entrance[int(input())]   
-        return en
-    
-    def choose_exit(self,floor_name):
-        ex=""
-        for i in self.floors:
-           if i.name == floor_name:
-                exit_list =  i.get_exit_list()
-                for j in range (len(exit_list)):
-                    print("{} - {} ".format(j,exit_list[j]))
-                ex = exit_list[int(input())]
-        return ex
-    
+    """
+CustomerSystem class : contains system operations that can be performed only by customer.
+It contains following operations such as
+1. Get ticket for vehicle parking.
+2. Display payment mode.
+3. Exit vehicle and get receipt from parking lot .
+
+    """
+    # Assign vehicle to spot in a floor
     def assign_spot_to_vehicle(self,floor_name,spot_name,vehicle_id):
-        floor = [i for i in self.floors if i.name == floor_name]
-        spot = [j for j in floor[0].spots if j.name == spot_name]
-        spot[0].vehicle_id = vehicle_id
+        floor = [floor for floor in self.get_floors() if floor.get_floor_name()  == floor_name]
+        spot = [spot for spot in floor[0].get_spots() if spot.get_spot_name()  == spot_name]
+        spot[0].set_vehicle_id(vehicle_id)
         spot[0].set_spot_status(True)
-        
+
+    # Get ticket for parking vehicle
     def get_ticket(self,floor_name,spot_name,entrance_name,vehicle_id):
         self.assign_spot_to_vehicle(floor_name,spot_name,vehicle_id)
         return Ticket(vehicle_id,floor_name,spot_name,entrance_name,datetime.datetime.now())
     
+    #  free vehilce spot from floor
     def free_spot(self,floor_name,spot_name):
-        floor = [i for i in self.floors if i.name == floor_name]
-        spot = [j for j in floor[0].spots if j.name == spot_name]
-        spot[0].vehicle_id = ""
+        floor = [floor for floor in self.get_floors() if floor.get_floor_name()  == floor_name]
+        spot = [spot for spot in floor[0].get_spots() if spot.get_spot_name()  == spot_name]
+        spot[0].set_vehicle_id("")
         spot[0].set_spot_status(False)
     
-    def payment_mode(self):
-        payment_mode=["Credit","Cash"]
-        print("0 - Cash\t1 - Credit")
-        n = int(input())
-        return payment_mode[n]
-        
+    # Display payment options
+    def display_payment_mode(self):
+        print("Credit or Cash")
+
+    # Exit vehicle from parking lot  
     def exit_vehicle(self,ticket,exit_name,payment_type):
-        self.free_spot(ticket.floor_name,ticket.spot_name)
-        price = self.calculate_price(ticket.entry_date)
+        self.free_spot(ticket.get_floor_name(),ticket.get_spot_name())
+        price = self.calculate_price(ticket.get_entry_date())
         if payment_type == "Credit":
             pay = Credit(price)
         else:
             pay = Cash(price)
-        result = pay.initiate_payment()
-        return Receipt(ticket,exit_name,datetime.datetime.now(),result[0],result[1])
+
+        return Receipt(ticket,exit_name,datetime.datetime.now(),pay.get_total_price(),pay.get_payment_status())
     
+    # Calculate price for parking duration of the vehicle 
     def calculate_price(self,entry_time):
         price=0
         second = int(entry_time.second)
