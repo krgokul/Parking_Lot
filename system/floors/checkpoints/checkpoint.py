@@ -1,5 +1,3 @@
-from tabnanny import check
-
 
 class Checkpoint:
     def __init__(self,type,name):
